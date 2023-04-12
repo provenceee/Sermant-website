@@ -1,5 +1,5 @@
 module.exports = {
-  base: `/Sermant${process.env.notifyBCDocVersion_PATH || '/'}`,
+  base: `/Sermant-website${process.env.notifyBCDocVersion_PATH || '/'}`,
   head: [
       [
         'link', { rel: 'icon', href: '/img/logo.svg'}
