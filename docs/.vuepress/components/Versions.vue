@@ -60,7 +60,7 @@ export default {
       let startIdx = 16;
       const versionIdx = path.indexOf('/version/');
       if (versionIdx >= 0) {
-        startIdx = versionIdx + 16;
+        startIdx = versionIdx + 9;
       }
       const endIdx = path.indexOf('/', startIdx);
       window.location.pathname =
