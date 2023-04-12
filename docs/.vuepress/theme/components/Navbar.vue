@@ -14,6 +14,8 @@
       >
     </RouterLink>
 
+    <versions />
+
     <div
       class="links"
       :style="linksWrapMaxWidth ? {
@@ -35,6 +37,7 @@ import AlgoliaSearchBox from '@AlgoliaSearchBox'
 import SearchBox from '@SearchBox'
 import SidebarButton from '@theme/components/SidebarButton.vue'
 import NavLinks from '@theme/components/NavLinks.vue'
+import Versions from '../../components/Versions.vue';
 
 export default {
   name: 'Navbar',
@@ -43,7 +46,8 @@ export default {
     SidebarButton,
     NavLinks,
     SearchBox,
-    AlgoliaSearchBox
+    AlgoliaSearchBox,
+    Versions
   },
 
   data () {
