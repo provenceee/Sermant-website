@@ -24,8 +24,8 @@ jobs:
       - name: Install and Build
         run: |
           cd docs
-          yarn install
-          yarn build
+          npm install
+          npm run docs:build
       - name: vuepress-deploy
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
