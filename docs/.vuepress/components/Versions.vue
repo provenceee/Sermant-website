@@ -3,7 +3,7 @@
     Version:
     <select v-model="selected" @change="onChange">
       <option v-for="option in options" :value="option.value">
-        {{ option.text }}
+        {{ option.text }}.x
       </option>
     </select>
   </span>
