@@ -14,7 +14,7 @@
       >
     </RouterLink>
 
-    <Versions/>
+    <Versions />
 
     <div
       class="links"

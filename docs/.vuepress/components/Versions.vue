@@ -43,7 +43,7 @@ export default {
       });
       this.options.unshift({value: 'main', text: 'main'});
       const path = window.location.pathname.toLowerCase();
-      if (path.startsWith('/notifybc/version/')) {
+      if (path.startsWith('/Sermant-website/version/')) {
         const start = 18;
         const end = path.indexOf('/', start);
         this.selected = path.substring(start, end);
