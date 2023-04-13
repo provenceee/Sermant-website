@@ -11,6 +11,7 @@
 
 <script>
 import Axios from 'axios';
+import Base64 from 'js-base64';
 export default {
   data() {
     return {
@@ -21,28 +22,16 @@ export default {
   created: async function() {
     try {
       let res = await Axios.get(
-        'https://api.github.com/repos/provenceee/Sermant-website/git/trees/gh-pages',
+        'https://api.github.com/repos/provenceee/Sermant-website/git/trees/main',
       );
       const versionNode = res.data.tree.find(e => {
-        return e.path.toLowerCase() === 'version';
+        return e.path.toLowerCase() === 'version.config';
       });
       res = await Axios.get(versionNode.url);
-      this.options = res.data.tree.map(e => {
-        return {value: e.path, text: e.path};
-      });
-      this.options.sort((e1, e2) => {
-        const e1Arr = e1.text.split('.');
-        const e2Arr = e2.text.split('.');
-        for (let i = 0; i < e1Arr.length && i < e2Arr.length; i++) {
-          const e1V = parseInt(e1Arr[i]);
-          const e2V = parseInt(e2Arr[i]);
-          if (e1V !== e2V) return e2V - e1V;
-          if (e1Arr[i] !== e2Arr[i]) return e2Arr[i] - e1Arr[i];
-        }
-        return e1.text === e2.text ? 0 : e2.text < e1.text ? -1 : 1;
-      });
+      let Base64 = require('js-base64').Base64;
+      this.options = Base64.decode(res.data.content);
       this.options.unshift({value: 'main', text: 'main'});
-      const path = window.location.pathname.toLowerCase();
+      const path = window.location.pathname;
       if (path.startsWith('/Sermant-website/version/')) {
         const start = 25;
         const end = path.indexOf('/', start);
@@ -56,7 +45,7 @@ export default {
     onChange(event) {
       const targetVersionPath =
         this.selected === 'main' ? '' : `/version/${this.selected}`;
-      const path = window.location.pathname.toLowerCase();
+      const path = window.location.pathname;
       let startIdx = 16;
       const versionIdx = path.indexOf('/version/');
       if (versionIdx >= 0) {
