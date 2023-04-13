@@ -28,7 +28,7 @@ export default {
       });
       res = await Axios.get(versionNode.url);
       this.options = eval("(" + window.atob(res.data.content) + ")").versions.map(e => {
-        return {value: e.version, text: e.version + 'x'};
+        return {value: e.version, text: e.version + '.x'};
       });;
       this.options.unshift({value: 'main', text: 'main'});
       const path = window.location.pathname;
