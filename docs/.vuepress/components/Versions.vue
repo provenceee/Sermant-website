@@ -1,6 +1,6 @@
 <template>
   <span class="nav-item" v-if="options && options.length > 0">
-    Version:
+    Versions:
     <select v-model="selected" @change="onChange">
       <option v-for="option in options" :value="option.value">
         {{ option.text }}
@@ -23,17 +23,17 @@ export default {
       let res = await Axios.get(
         'https://api.github.com/repos/provenceee/Sermant-website/git/trees/test',
       );
-      const versionNode = res.data.tree.find(e => {
+      const versionsNode = res.data.tree.find(e => {
         return e.path.toLowerCase() === 'versions.json';
       });
-      res = await Axios.get(versionNode.url);
+      res = await Axios.get(versionsNode.url);
       this.options = eval("(" + window.atob(res.data.content) + ")").versions.map(v => {
         return {value: v, text: v};
       });;
       this.options.unshift({value: 'latest', text: 'latest'});
       const path = window.location.pathname;
-      if (path.startsWith('/Sermant-website/version/')) {
-        const start = 25;
+      if (path.startsWith('/Sermant-website/versions/')) {
+        const start = 26;
         const end = path.indexOf('/', start);
         this.selected = path.substring(start, end);
       } else {
@@ -46,12 +46,12 @@ export default {
   methods: {
     onChange(event) {
       const targetVersionPath =
-        this.selected === 'latest' ? '' : `/version/${this.selected}`;
+        this.selected === 'latest' ? '' : `/versions/${this.selected}`;
       const path = window.location.pathname;
       let startIdx = 16;
-      const versionIdx = path.indexOf('/version/');
+      const versionIdx = path.indexOf('/versions/');
       if (versionIdx >= 0) {
-        startIdx = versionIdx + 9;
+        startIdx = versionIdx + 10;
       }
       const endIdx = path.indexOf('/', startIdx);
       window.location.pathname =
