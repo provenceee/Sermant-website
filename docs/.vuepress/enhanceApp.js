@@ -12,7 +12,6 @@ import en from "element-ui/lib/locale/lang/en";
 import zh from "element-ui/lib/locale/lang/zh-CN";
 import locale from "element-ui/lib/locale";
 import axios from "axios";
-import Base64 from 'js-base64';
 export default ({
   Vue, // VuePress 正在使用的 Vue 构造函数
   options, // 附加到根实例的一些选项
@@ -27,7 +26,6 @@ export default ({
   Vue.use(Pagination);
   Vue.use(Tooltip);
   Vue.use(Image);
-  Vue.use(Base64);
   Vue.prototype.$axios = axios;
   router.beforeEach((to, from, next) => {
     if (to.path.indexOf("/en") !== -1) {

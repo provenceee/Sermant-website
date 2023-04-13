@@ -11,6 +11,7 @@
 
 <script>
 import Axios from 'axios';
+import Base64 from 'js-base64'
 export default {
   data() {
     return {
@@ -27,7 +28,9 @@ export default {
         return e.path.toLowerCase() === 'version.config';
       });
       res = await Axios.get(versionNode.url);
-      this.options = Base64.decode(res.data.content);
+      this.options = Base64.decode(res.data.content).versions.map(e => {
+        return {value: e.version, text: e.version + 'x'};
+      });;
       this.options.unshift({value: 'main', text: 'main'});
       const path = window.location.pathname;
       if (path.startsWith('/Sermant-website/version/')) {
