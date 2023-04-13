@@ -11,7 +11,6 @@
 
 <script>
 import Axios from 'axios';
-import Base64 from 'js-base64';
 export default {
   data() {
     return {
@@ -28,7 +27,6 @@ export default {
         return e.path.toLowerCase() === 'version.config';
       });
       res = await Axios.get(versionNode.url);
-      let Base64 = require('js-base64').Base64;
       this.options = Base64.decode(res.data.content);
       this.options.unshift({value: 'main', text: 'main'});
       const path = window.location.pathname;
