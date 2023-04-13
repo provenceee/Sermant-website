@@ -19,6 +19,7 @@ export default {
     };
   },
   created: async function() {
+    try {
       let res = await Axios.get(
         'https://api.github.com/repos/provenceee/Sermant-website/git/trees/test',
       );
@@ -38,6 +39,9 @@ export default {
       } else {
         this.selected = 'main';
       }
+    } catch (ex) {
+      console.log(ex);
+    }
   },
   methods: {
     onChange(event) {
