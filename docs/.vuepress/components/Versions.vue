@@ -21,7 +21,7 @@ export default {
   created: async function() {
     try {
       let res = await Axios.get(
-        'https://api.github.com/repos/provenceee/Sermant-website/git/trees/main',
+        'https://api.github.com/repos/provenceee/Sermant-website/git/trees/test',
       );
       const versionNode = res.data.tree.find(e => {
         return e.path.toLowerCase() === 'version.config';
