@@ -27,7 +27,7 @@ export default {
         return e.path.toLowerCase() === 'versions.json';
       });
       res = await Axios.get(versionNode.url);
-      this.options = window.atob(res.data.content).versions.map(e => {
+      this.options = eval("(" + window.atob(res.data.content) + ")").versions.map(e => {
         return {value: e.version, text: e.version + 'x'};
       });;
       this.options.unshift({value: 'main', text: 'main'});
