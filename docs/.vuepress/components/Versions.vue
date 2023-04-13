@@ -27,17 +27,17 @@ export default {
         return e.path.toLowerCase() === 'versions.json';
       });
       res = await Axios.get(versionNode.url);
-      this.options = eval("(" + window.atob(res.data.content) + ")").versions.map(e => {
-        return {value: e.version, text: e.version + '.x'};
+      this.options = eval("(" + window.atob(res.data.content) + ")").versions.map(v => {
+        return {value: v, text: v};
       });;
-      this.options.unshift({value: 'main', text: 'main'});
+      this.options.unshift({value: 'latest', text: 'latest'});
       const path = window.location.pathname;
       if (path.startsWith('/Sermant-website/version/')) {
         const start = 25;
         const end = path.indexOf('/', start);
         this.selected = path.substring(start, end);
       } else {
-        this.selected = 'main';
+        this.selected = 'latest';
       }
     } catch (ex) {
       console.log(ex);
@@ -46,7 +46,7 @@ export default {
   methods: {
     onChange(event) {
       const targetVersionPath =
-        this.selected === 'main' ? '' : `/version/${this.selected}`;
+        this.selected === 'latest' ? '' : `/version/${this.selected}`;
       const path = window.location.pathname;
       let startIdx = 16;
       const versionIdx = path.indexOf('/version/');
