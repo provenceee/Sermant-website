@@ -24,7 +24,7 @@ export default {
         'https://api.github.com/repos/provenceee/Sermant-website/git/trees/test',
       );
       const versionNode = res.data.tree.find(e => {
-        return e.path.toLowerCase() === 'version.config';
+        return e.path.toLowerCase() === 'versions.json';
       });
       res = await Axios.get(versionNode.url);
       this.options = window.atob(res.data.content).versions.map(e => {
