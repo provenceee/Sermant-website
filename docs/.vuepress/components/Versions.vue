@@ -21,7 +21,7 @@ export default {
   created: async function() {
     try {
       let response = await Axios.get(
-        'https://api.github.com/repos/huaweicloud/Sermant-website/git/trees/main',
+        'https://api.github.com/repos/provenceee/Sermant-website/git/trees/test1',
       );
       const versionsNode = response.data.tree.find(e => {
         return e.path == 'versions.json';
