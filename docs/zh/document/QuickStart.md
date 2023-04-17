@@ -1,6 +1,6 @@
 # 快速开始
 
-## 下载或编译
+## 下载或编译2222222
 
 点击[此处](https://github.com/huaweicloud/Sermant/releases)下载**Sermant**二进制包。如果您想自己编译项目，请遵循以下步骤。
 
