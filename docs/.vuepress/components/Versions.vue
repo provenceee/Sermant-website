@@ -35,8 +35,8 @@ export default {
       }
       this.options.unshift({value: 'latest', text: 'latest'});
       const path = window.location.pathname;
-      if (path.startsWith('/Sermant-website/versions/')) {
-        const start = 26;
+      if (path.startsWith('/versions/')) {
+        const start = 10;
         const end = path.indexOf('/', start);
         this.selected = path.substring(start, end);
       } else {
@@ -50,10 +50,10 @@ export default {
     onChange(event) {
       const path = window.location.pathname;
       const versionIdx = path.indexOf('/versions/');
-      const startIdx = versionIdx >= 0 ? versionIdx + 10 : 16;
+      const startIdx = versionIdx >= 0 ? versionIdx + 10 : 0;
       const endIdx = path.indexOf('/', startIdx);
       const versionPath = this.selected == 'latest' ? '' : `/versions/${this.selected}`;
-      window.location.pathname = path.substring(0, 16) + versionPath + path.substring(endIdx);
+      window.location.pathname = versionPath + path.substring(endIdx);
     }
   }
 };
