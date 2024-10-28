@@ -210,9 +210,9 @@ spec:
 ### 1 准备工作
 
 - 已经部署好kubernetes环境
-- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release包（当前版本推荐2.0.0版本）
-- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-grace-demo-2.0.0.tar.gz) Demo二进制产物压缩包
-- [下载](https://github.com/alibaba/nacos/releases)Nacos（注册中心），并部署
+- [下载](https://github.com/sermant-io/Sermant/releases/download/v2.1.0/sermant-2.1.0.tar.gz) Sermant Release包（当前版本推荐2.1.0版本）
+- [下载](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-grace-demo-2.1.0.tar.gz) Demo二进制产物压缩包
+- [下载](https://github.com/alibaba/nacos/releases) Nacos（注册中心），并部署
 
 > **注意：** 
 > 1. [动态配置中心](../user-guide/configuration-center.md)会在本场景中默认使用，由于非本场景的核心组件，因此在本文中不额外赘述。
