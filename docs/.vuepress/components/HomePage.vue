@@ -68,7 +68,6 @@
           <div style="background: #eeeeee">
             <div class="contact-box">
               <Content slot-key="Vision"></Content>
-              <Content slot-key="Disclaimer"></Content>
               <div>
                 <Content slot-key="Contact"></Content>
                 <div v-if="$localePath === '/zh/'" class="wechat-QR-box">
@@ -82,7 +81,15 @@
               </div>
             </div>
           </div>
-          <Content class="content-footer" slot-key="footer"></Content>
+          <div>
+            <Content class="cncf-footer" slot-key="CNCF"></Content>
+            <div class="cncf-logo-box">
+              <img :src="$withBase('/img/cncf-color.svg')" style="width: 70%; max-width: 600px;"
+                  alt="cncf-logo"
+              />
+            </div>
+          </div>
+          <Content class="copyright" slot-key="Copyright"></Content>
         </div>
       </div>
     </template>
@@ -123,11 +130,19 @@
   margin-top: 7rem;
 }
 
-.content-footer {
+.cncf-footer {
   margin: 0 auto;
-  font-size: 16px;
+  font-size: 18px;
   text-align: center;
   border-top: 1px solid #d2d6e1;
+  background: #eeeeee;
+  width: 80%;
+}
+
+.copyright {
+  margin: auto 5rem auto 5rem;
+  font-size: 15px;
+  text-align: center;
   background: #eeeeee;
 }
 
@@ -236,6 +251,12 @@ svg {
 
 .wechat-QR-box {
   text-align: center;
+}
+
+.cncf-logo-box {
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
 }
 
 .el-button--blogs,

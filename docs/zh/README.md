@@ -27,17 +27,17 @@ scrolling="yes" border="0" frameborder="no" framespacing="0" allowfullscreen="tr
 扫描下方二维码加入Sermant社区进行交流
 :::
 
-::: slot Disclaimer
-## 声明
-Sermant是华为云基于Apache License 2.0协议的开源项目。
-:::
-
 ::: slot Vision
 ## 愿景
 Sermant是基于Java字节码增强技术的无代理服务网格，其利用Java字节码增强技术为宿主应用程序提供服务治理功能，以解决大规模微服务体系结构中的服务治理问题。Sermant
 的愿景还包括构建插件开发生态系统，以帮助开发人员更容易地开发服务治理功能，同时不干扰业务代码。
 :::
 
-::: slot footer
-Apache-2.0 Licensed | Copyright © 2021-present | A CNCF Landscape Project
+::: slot CNCF
+Sermant is a [Cloud Native Computing Foundation](https://www.cncf.io/) sandbox project.
+:::
+
+::: slot Copyright
+The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our [Trademark Usage](https://www.linuxfoundation.org/legal/trademark-usage) page.   
+2024 © Sermant Project Authors. All rights reserved.
 :::

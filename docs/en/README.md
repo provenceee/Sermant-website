@@ -21,17 +21,17 @@ Proxyless architecture eliminates the need for inter-process communication, sign
 Join us in [Slack](https://app.slack.com/client/T08PSQ7BQ/C06VDFQUA7N) of Sermant community.
 :::
 
-::: slot Disclaimer
-## Disclaimer
-Sermant is an open-source project under Apache License 2.0.
-:::
-
 ::: slot Vision
 ## Vision
 Sermant is a proxyless service mesh based on Java bytecode enhancement technology. It utilizes Java bytecode enhancement to provide service governance capabilities to applications, addressing service governance issues in large-scale microservices architectures. Sermant's vision also includes building a plugin development ecosystem to assist developers in more easily creating service governance functionalities without interfering with the application's source code.
 :::
 
-::: slot footer
-Apache-2.0 Licensed | Copyright © 2021-present | A CNCF Landscape Project
+::: slot CNCF
+Sermant is a [Cloud Native Computing Foundation](https://www.cncf.io/) sandbox project.
+:::
+
+::: slot Copyright
+The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our [Trademark Usage](https://www.linuxfoundation.org/legal/trademark-usage) page.  
+2024 © Sermant Project Authors. All rights reserved.
 :::
 
