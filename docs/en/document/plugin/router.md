@@ -6,6 +6,27 @@ This document is used to introduce the usage of [tag router](https://github.com/
 
 The tag routing plugin implements the configuration and management of routing rules between microservices in a non-intrusive way. In the case of multiple versions and instances of microservices, the tag routing plugin can manage the routing between services by configuring routing rules to achieve lossless upgrade, application dial test and other business purposes.
 
+## Supported Versions and Limitations
+
+**Supported Frameworks:**
+
+- SpringCloud Edgware.SR2 - 2021.0.0
+- Dubbo 2.6.x - 2.7.x, 3.0.x - 3.2.x
+
+**Limitations:**
+
+- For routing based on Sermant dynamic configuration service, the HTTP client currently only supports Feign and RestTemplate. For routing based on the xDS protocol, the HTTP client currently supports Feign, RestTemplate, HttpClient, HttpAsyncClient, HttpURLConnection, and OkHttp.
+
+## Dependent Core Services of Sermant
+
+The routing plugin's functionality depends on Sermant's core services. The specific core services it depends on are as follows:
+
+- **Dynamic Configuration Service**: The routing plugin uses Sermant framework's [Dynamic Configuration Service](../user-guide/configuration-center.md) to distribute routing rule configurations. For detailed rule configuration, refer to [Detailed Routing Rules](#detailed-routing-rules).
+
+- **xDS Service**: The routing plugin uses Sermant framework's xDS service to obtain the service's [routing configuration](../user-guide/sermant-xds.md#routing-based-on-xds-service), [service instances](../user-guide/sermant-xds.md#service-discovery-based-on-xds-servicee), and [load balancing configuration](../user-guide/sermant-xds.md#load-balancing-based-on-xds-service) to implement routing based on the xDS protocol. For detailed information on xDS routing, refer to [Routing Based on xDS Protocol](#routing-based-on-the-xds-protocol).
+
+- **Metric Service**: The routing plugin collects routing-related metric information based on the [Metric Service](../user-guide/sermant-agent.md#metric-service) from the Sermant framework layer. For routing metrics, refer to [Routing Metric Collection](#route-metric-collection).
+
 ## Parameter Configuration
 
 ### Sermant-agent Configuration
@@ -80,18 +101,6 @@ The content is the specific routing rule.
 |   Greater Match    |     greater     |                                                                           The parameter value is greater than the configured value                                                                           |
 |     Less Match     |      less       |                                                                            The parameter value is less than the configured value                                                                             |
 
-## Supported Versions and Limitations
-
-Framework Supported: 
-
-- SpringCloud Edgware.SR2 - 2021.0.0
-
-- Dubbo 2.6.x-2.7.x，3.0.x-3.2.x
-
-Limitations:
-
-- Routing based on the Sermant dynamic configuration service currently supports Feign and RestTemplate for HTTP clients. For routing based on the xDS protocol, the HTTP clients currently supported include Feign, RestTemplate, HttpClient, HttpAsyncClient, HttpURLConnection, and OkHttp.
-
 ## Routing based on the xDS protocol
 
 The routing plugin obtains service [routing configurations](../user-guide/sermant-xds.md#routing-based-on-xds-service), [service instances](../user-guide/sermant-xds.md#service-discovery-based-on-xds=service), and [load balancing configurations](../user-guide/sermant-xds.md#load-balancing-based-on-xds=service) from the xDS service at the Sermant framework layer to implement routing based on the xDS protocol (hereinafter referred to as xDS routing). Users can configure routing rules via Istio's [DestinationRule](https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/) and [VirtualService](https://istio.io/latest/zh/docs/reference/config/networking/virtual-service/). Currently, traffic can be routed based on request headers and paths, and it supports frameworks like HttpClient, HttpAsyncClient, OkHttp, HttpURLConnection, and Spring Cloud.
@@ -118,19 +127,41 @@ The format for upstream service calls through HTTP clients should be `http://${s
 | OkHttp            | 2.2.x+                 |
 | HttpURLConnection | 1.8                    |
 
+## Route Metric Collection
+
+The route metric collection feature is based on the Sermant framework's metrics service, enabling the collection of metric data during routing processes.
+
+### Using the Route Metric Collection Feature
+
+To enable the route metric collection feature, you need to set it in the `config/config.yaml` configuration file of the routing plugin:
+
+```yaml
+enable-metric: true
+```
+
+> **Note**: To collect metrics from the routing plugin, the Sermant metrics core service must be enabled. Please refer to the [Metrics Service](../user-guide/sermant-agent.md#metric-service) for specific configuration details.
+
+### Route Metrics
+
+The following metrics can be collected by the route metric collection feature:
+
+| Metric Name                     | Description                               | Tags |
+|----------------------------------|-------------------------------------------|------|
+| router_request_count             | Number of requests                                                          | protocol: protocol, http/dubbo <br> client_service_name: Name of the service sending the request <br> server_address: Address of the service receiving the request <br> scope: Source of the metric, server-router: from the routing plugin               |
+| router_destination_tag_count     | Number of times routed to the target service based on routing rules          | protocol: protocol, http/dubbo <br> client_service_name: Name of the service sending the request <br> service_meta_service: Service label information matched based on the service label <br> service_meta_version: Service version label information matched based on version label <br> service_meta_application: Service application label information matched based on application label <br> service_meta_zone: Service zone label information matched based on zone label <br> service_meta_project: Service project label information matched based on project label <br> service_meta_environment: Service environment label information matched based on environment label <br> service_meta_parameters: Custom label information matched based on user-defined labels <br> scope: Source of the metric, server-router: from the routing plugin |
+| router_unmatched_request_count   | Number of requests not matching any routing rule                            | protocol: protocol, http/dubbo <br> client_service_name: Name of the service sending the request <br> scope: Source of the metric, server-router: from the routing plugin                                                                                                 |
+| lane_tag_count                   | Number of times the request is tagged based on coloring rules              | protocol: protocol, http/dubbo <br> client_service_name: Name of the service sending the request <br> scope: Source of the metric, server-router: from the routing plugin <br> lane_tag: Coloring mark added to the request after successful rule matching |
+
 ## Operation and Result Verification
 
 Take the Spring Cloud scenario as an example to demonstrate the use of tag routing plugins.
 
 ### Preparations
 
-- [Download](https://github.com/sermant-io/Sermant/releases)/Compile the sermant package
-
-- [Download](https://github.com/sermant-io/Sermant-examples/tree/main/router-demo/spring-cloud-router-demo) spring-cloud-router-demo source code
-
-- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb, and start
-
-- [Download](https://zookeeper.apache.org/releases.html#download) Zookeeper, and start
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.1.0/sermant-2.1.0.tar.gz) Sermant Release package (current recommended version is 2.1.0)
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-router-demo-2.1.0.tar.gz) Demo binary artifact package
+- [Download](https://github.com/apache/servicecomb-service-center) ServiceComb (registry center), and start it
+- [Download](https://zookeeper.apache.org/releases.html#download) ZooKeeper (dynamic configuration center), and start it
 
 ### Step 1: Compile and package the spring-cloud-router-demo application
 

@@ -88,8 +88,8 @@ Sermant Backend parameters can be modified through the `sermant-backend/src/main
 | dynamic.config.connectTimeout |Timeout for connecting to the configuration center | 3000 | Must be turned on when the configuration management switch is turned on |
 | dynamic.config.enableAuth | Whether to enable authorization authentication, support Nacos and Zookeeper | false | Must be turned on when the configuration management switch is turned on |
 | dynamic.config.userName |Username (plain text) used during authorization authentication | null | Required when enabling authorization authentication |
-| dynamic.config.password |Password used for authorization authentication (ciphertext encrypted by AES) | null | Required when enabling authorization authentication |
-| dynamic.config.secretKey |The key used when the password is encrypted using AES| null | Required when enabling authorization authentication |
+| dynamic.config.password |The password used for authorization (encrypted in AES, for details on generating the ciphertext, please refer to the [AES Encryption FAQ](../faq/encryption.md)) | null | Required when enabling authorization authentication |
+| dynamic.config.secretKey |The key used for AES encryption of the password. For details on key generation, please refer to the [AES Encryption FAQ](../faq/encryption.md)| null | Required when enabling authorization authentication |
 | dynamic.config.template.path   |The UI template path for the configuration page, refer to [UI Template for Configuration Management for template development](../developer-guide/config-manage.md). | null     |    否       |
 
 ## Versions Supported

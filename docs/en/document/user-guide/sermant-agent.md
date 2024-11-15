@@ -333,6 +333,58 @@ The Sermant Dynamic Configuration Service allows Sermant to pull configurations 
 
 The Sermant xDS Service enables microservices to connect to Istio in Kubernetes scenarios. Sermant communicates directly with the Istio control plane based on the xDS protocol to retrieve configuration information for service discovery, routing, load balancing, and more, thereby replacing Envoy as the data plane for service governance capabilities in Istio. For a detailed introduction and usage of the Sermant xDS Service, please refer to [Proxyless Service Mesh Based onSermant + Istio](./sermant-xds.md).
 
+### Metric Service
+
+The Sermant Metric Service allows users to collect and display core metrics and custom metrics from Sermant using monitoring tools like Prometheus. Through these metrics, users can gain real-time insights into the health of services and promptly identify potential issues.
+
+#### Prerequisites
+
+Before using the Sermant Metric Service, ensure that the following conditions are met:
+
+- Sermant is correctly integrated into the application.
+- The Prometheus monitoring tool is installed and running.
+
+#### Configuring the Sermant Metric Service
+
+##### Enabling the Metric Service
+
+1. Open the Sermant configuration file located at `agent/config/config.properties`.
+2. Set the following configuration items to enable the Metric Service:
+
+    ```properties
+    # Enable HTTP service
+    agent.service.httpserver.enable=true
+    # Enable Metric service
+    agent.service.metric.enable=true
+    ```
+
+##### Configuring Prometheus
+
+1. Open the Prometheus configuration file `prometheus.yml`.
+2. Add the following configuration to scrape the metrics endpoint exposed by Sermant:
+
+    ```yaml
+    scrape_configs:
+    - job_name: 'sermant-metrics'
+        metrics_path: '/sermant/metrics'
+        static_configs:
+        - targets: ['<Sermant-Host>:47128']
+    ```
+
+    > Replace `<Sermant-Host>` with the actual host address where Sermant is running.
+
+#### Using the Sermant Metric Service
+
+##### Creating Custom Metrics
+
+If you need to create custom metrics in your plugin, please refer to: [Metric Function](../developer-guide//metric-func.md).
+
+#### Viewing Metrics
+
+1. Start the Prometheus service.
+2. Access the Prometheus web interface, typically at `http://<Prometheus-Host>:9090`.
+3. In the Prometheus query interface, enter the metric name, such as `custom_counter_total`, to view the corresponding metric data.
+
 ## Configuration Specifications
 
 The properties configuration files of the Sermant project and the YAML configuration files of each plugin support the following parameter configuration methods. For example, in the configuration file, `gateway.nettyIp=127.0.0.1`:

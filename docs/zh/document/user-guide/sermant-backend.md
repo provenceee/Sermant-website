@@ -84,8 +84,8 @@ Sermant Backend参数可在编译打包前通过`sermant-backend/src/main/resour
 | dynamic.config.connectTimeout    |连接配置中心的超时时间 | 3000     |    配置管理的开关开启时必须       |
 | dynamic.config.enableAuth    |是否开启授权认证，支持Nacos和Zookeeper | false     |    配置管理的开关开启时必须       |
 | dynamic.config.userName    |授权认证时使用的用户名（明文） | null     |    开启授权认证时必须       |
-| dynamic.config.password    |授权认证时使用的密码（采用AES加密后的密文）| null     |    开启授权认证时必须       |
-| dynamic.config.secretKey    |密码采用AES方式加密时使用的密钥 | null     |    开启授权认证时必须       |
+| dynamic.config.password    |授权认证时使用的密码（采用AES加密后的密文，密文生成方式请参考[AES加密常见问题](../faq/encryption.md)）| null     |    开启授权认证时必须       |
+| dynamic.config.secretKey    |密码采用AES方式加密时使用的密钥, 密钥生成方式请参考[AES加密常见问题](../faq/encryption.md) | null     |    开启授权认证时必须       |
 | dynamic.config.template.path   |配置页面的UI模板路径,模板的开发参见[配置管理的UI模板](../developer-guide/config-manage.md) | null     |    否       |
 
 ## 支持版本
