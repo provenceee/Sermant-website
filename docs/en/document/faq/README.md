@@ -8,5 +8,4 @@ This document mainly explains common problems encountered when using Sermant.
 
 [Flow Control FAQs](./flowcontrol.md): Frequently asked questions about the use of flow control plugins.
 
-
-
+[Middleware Authorization and Authentication FAQs](./encryption.md): Records common issues encountered when using AES encryption.

@@ -9,6 +9,28 @@
 
 路由插件目前支持基于xDS服务获取路由配置，实现微服务调用之间的流量路由能力。
 
+## 支持版本和限制
+
+框架支持：
+
+- SpringCloud Edgware.SR2 - 2021.0.0
+
+- Dubbo 2.6.x-2.7.x，3.0.x-3.2.x
+
+限制：
+
+- 基于Sermant动态配置服务进行路由，http客户端目前仅支持Feign、RestTemplate；基于xDS协议的路由，http客户端目前支持Feign、RestTemplate、HttpClient、HttpAsyncClient、HttpURLConnection和OkHttp
+
+## 依赖的Sermant核心服务
+
+路由插件的功能依赖于Sermant的核心服务，依赖的具体核心服务如下所示：
+
+- 动态配置服务：路由插件基于Sermant框架层的[动态配置服务](../user-guide/configuration-center.md)来下发路由规则配置，具体规则配置参见[详细路由规则](#详细路由规则)
+
+- xDS服务：路由插件基于Sermant框架层的xDS服务获取服务的[路由配置](../user-guide/sermant-xds.md#基于xDS服务的路由能力)、[服务实例](../user-guide/sermant-xds.md#基于xDS服务的服务发现能力)和[负载均衡配置](../user-guide/sermant-xds.md#基于xDS服务的负载均衡能力)实现基于xDS协议的路由。xDS路由的详细信息参见[基于xDS协议的路由](#基于xds协议的路由)
+
+- 指标服务：路由插件基于Sermant框架层的[指标服务](../user-guide/sermant-agent.md#指标服务)采集路由相关的指标信息。路由指标参见[路由指标采集](#路由指标采集)
+
 ## 参数配置
 
 ### Sermant-agent配置
@@ -282,18 +304,6 @@
 |.get(0)|取List的第一个值，相当于ARG0.get(0)|适用于普通类型的列表，例如List\<String>、List\<Integer>|
 |.get("key")|获取key对应的值，相当于ARG0.get("key")|适用于普通类型的map，例如Map<String, String>|
 
-## 支持版本和限制
-
-框架支持：
-
-- SpringCloud Edgware.SR2 - 2021.0.0
-
-- Dubbo 2.6.x-2.7.x，3.0.x-3.2.x
-
-限制：
-
-- 基于Sermant动态配置服务进行路由，http客户端目前仅支持Feign、RestTemplate；基于xDS协议的路由，http客户端目前支持Feign、RestTemplate、HttpClient、HttpAsyncClient、HttpURLConnection和OkHttp
-
 ## 基于xDS协议的路由
 
 路由插件基于Sermant框架层的xDS服务获取服务的[路由配置](../user-guide/sermant-xds.md#基于xDS服务的路由能力)、[服务实例](../user-guide/sermant-xds.md#基于xDS服务的服务发现能力)和[负载均衡配置](../user-guide/sermant-xds.md#基于xDS服务的负载均衡能力)实现基于xDS协议的路由（下文简称xDS路由）。用户可以通过Istio的[DestinationRule](https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/)和[VirtualService](https://istio.io/latest/zh/docs/reference/config/networking/virtual-service/)下发路由配置。目前支持通过请求header和路径进行流量路由，支持HttpClient、HttpAsyncClient、OkHttp、HttpURLConnection和Spring Cloud框架。
@@ -319,6 +329,32 @@ http客户端调用上游服务的URL格式需要为`http://${serviceName}.${hos
 | HttpAsyncClient   | 4.x                    |
 | OkHttp            | 2.2.x+                 |
 | HttpURLConnection | 1.8                    |
+
+## 路由指标采集
+
+路由指标采集功能基于Sermant框架的指标服务，实现了在路由过程中采集指标数据的能力。
+
+### 使用路由指标采集功能
+
+使用路由指标采集功能时需要在路由插件的 `config/config.yaml` 配置文件中开启路由指标采集功能：
+
+```yaml
+enable-metric: true
+```
+
+> **注意**：采集路由插件指标需要开启Sermant指标核心服务，具体配置内容请参考[指标服务](../user-guide/sermant-agent.md#指标服务)。
+
+### 路由指标
+
+以下路由指标采集功能可以采集的指标：
+
+| 指标名称             | 说明               |  标签 |
+| - | ---------------------- |----|
+| router_request_count       | 请求次数 | protocol ：协议，http/dubbo <br> client_service_name：发送请求的服务的名称 <br> server_address：接收请求的服务的地址 <br>scope：指标的来源，server-router：来源于路由插件  |
+| router_destination_tag_count        | 根据路由规则路由到目标服务的次数| protocol ：协议，http/dubbo <br> client_service_name：发送请求的服务的名称 <br> service_meta_service：根据service标签匹配到的服务的service标签信息<br> service_meta_version：根据version标签匹配到的服务的version标签信息 <br>service_meta_application：根据application标签匹配到的服务的application标签信息<br>service_meta_zone：根据zone标签匹配到的服务的zone标签信息 <br>service_meta_project：根据project标签匹配到的服务的project标签信息 <br>service_meta_environment：根据environment标签匹配到的服务的environment标签信息  <br>service_meta_parameters：根据用户自定义标签匹配到的服务的自定义标签信息 <br> scope：scope：指标的来源，server-router：来源于路由插件|
+| router_unmatched_request_count      | 未匹配到路由规则的请求次数                 | protocol ：协议，http/dubbo <br>client_service_name：发送请求的服务的名称 <br>scope：scope：指标的来源，server-router：来源于路由插件|
+| lane_tag_count            | 标签染色的次数                |protocol ：协议，http/dubbo <br> client_service_name：发送请求的服务的名称 <br>scope：scope：指标的来源，server-router：来源于路由插件 <br> lane_tag：染色规则匹配成功后，请求带上的染色标记 |
+
 
 ## 操作和结果验证
 
