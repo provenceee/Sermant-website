@@ -305,7 +305,7 @@ Sermant版本：[`Release v2.0.0`](https://github.com/sermant-io/Sermant/release
 
 1. 基线应用性能对比：测试Java应用挂载Sermant，静态场景下的内存损耗。
 
-2. Sidecar性能对比：测试Java应用在500TPS下使用Sermant xDS路由和负载均衡能力或Sidecar（Envoy）相较于基线应用的性能对比，包括Pod的CPU占用、内存和服务调用时延指标。测试场景为spring-client应用调用spring-server应用，spring-client使用Sermant的路由插件实现基于xDS服务的路由和负载均衡能力，采集spring-client应用使用不同Http框架时所在Pod的性能指标。
+2. Sidecar性能对比：测试Java应用在2000TPS下使用Sermant xDS路由和负载均衡能力或Sidecar（Envoy）相较于基线应用的性能对比，包括Pod的CPU占用、内存和服务调用时延指标。测试场景为spring-client应用查询数据库并调用spring-server应用，spring-client使用Sermant的路由插件实现基于xDS服务的路由和负载均衡能力，采集spring-client应用使用不同Http框架时所在Pod的性能指标。
 
    > 说明：使用 [xds-router-demo](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-router-demo-2.1.0.tar.gz) 作为本次的基准应用进行性能测试
 
@@ -350,16 +350,16 @@ Sermant版本：[`Release v2.1.0`](https://github.com/sermant-io/Sermant/release
 
 #### 部署环境
 
-本次测试使用华为云容器引擎CCE进行应用部署，K8s集群的ECS节点数量为2个，规格如下：
+本次测试使用华为云容器引擎CCE进行应用部署，K8s集群的ECS节点数量为1个，规格如下：
 
 ```
-规格：通用计算型｜8vCPUs｜24GiB
+规格：通用计算型｜72vCPUs｜144GiB
 Docker Version: v18.09.0
-Kubernetes Version: v1.23.5
+Kubernetes Version: v1.23.9
 Istio Version：v1.17.8
 ```
 
-K8s中所有应用Container的规格一致，均为`1vCPUs|2GiB`，Envoy 的Container规格为`1vCPUs|2GiB`。
+K8s中所有应用Container的规格一致，均为`4vCPUs|8GiB`，Envoy 的Container规格为`4vCPUs|8GiB`。
 
 Sermant版本：[`Release v2.1.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.1.0)
 
@@ -367,38 +367,35 @@ Sermant版本：[`Release v2.1.0`](https://github.com/sermant-io/Sermant/release
 
 **基线测试结果：**
 
-| 测试场景：基线            | CPU占用 | 内存占用 | 平均调用时延 | p90  | p99  |
-| ------------------------- | ------- | -------- | ------------ | ---- | ---- |
-| HttpClient                | 358m    | 0.19G    | 3ms          | 5ms  | 44ms |
-| HttpAsyncClient           | 363m    | 0.18G    | 3ms          | 5ms  | 42ms |
-| jdkHttp                   | 362m    | 0.19G    | 3ms          | 5ms  | 34ms |
-| OkHttp                    | 349m    | 0.18     | 3ms          | 5ms  | 50ms |
-| SpringCloud(RestTemplate) | 459m    | 0.18G    | 4ms          | 6ms  | 56ms |
+| 测试场景：基线            | CPU占用率（总体占用率百分比） | 平均调用时延 | p90  | p99  |
+| ------------------------- | --------- |  ------------ | ---- | ---- |
+| HttpClient                | 52.6%  |  3.29ms      | 4ms  | 7ms |
+| HttpAsyncClient           | 58%    |  3.6ms        | 5ms  | 8ms |
+| jdkHttp                   | 53%    |  3.47ms       | 5ms  | 8ms |
+| OkHttp                    | 45.3%  |  2.98ms      | 4ms  | 7ms |
 
 **对比测试结果：**
 
-| 测试场景：Sermant         | CPU占用增加 | 内存占用增加 | 平均调用时延增加 | p90增加 | p99增加 |
-| ------------------------- | ----------- | ------------ | ---------------- | ------- | ------- |
-| HttpClient                | +17.3%      | +0.05G       | +0ms             | +0ms    | +11ms   |
-| HttpAsyncClient           | +14.6%      | +0.06G       | +1ms             | +0ms    | +9ms    |
-| jdkHttp                   | +11,9%      | +0.04G       | +0ms             | -1ms    | +16ms   |
-| OkHttp                    | +11.1%      | +0.06G       | +1ms             | +0ms    | +9ms    |
-| SpringCloud(RestTemplate) | +15%        | +0.06G       | +1ms             | +2ms    | +11ms   |
+| 测试场景：Sermant         | CPU占用率增加 | 平均调用时延增加 | p90增加 | p99增加 |
+| ------------------------- | ----------- |  ---------------- | ------- | ------- |
+| HttpClient                | +1.2%   |  +0.1ms           | +1ms   | +1ms  |
+| HttpAsyncClient           | +1.3%  |  +0.05ms         | +0ms    | +0ms   |
+| jdkHttp                   | +1.5%    |  +0.07ms         | +0ms | +0ms  |
+| OkHttp                    | +1.5%    |  +0.07ms         | +1ms   | +0ms   |
 
 
-| 测试场景：Envoy           | CPU占用增加 | 内存占用增加 | 平均调用时延增加 | p90增加 | p99增加 |
-| ------------------------- | ----------- | ------------ | ---------------- | ------- | ------- |
-| HttpClient                | +86.3%      | 0.04G        | +6ms             | +10ms   | +50ms   |
-| HttpAsyncClient           | +88.4%      | 0.05G        | +5ms             | +8ms    | +50ms   |
-| jdkHttp                   | +81.8%      | 0.05G        | +5ms             | +7ms    | +57ms   |
-| OkHttp                    | +84.6%      | 0.04G        | +7ms             | +10ms   | +45ms   |
-| SpringCloud(RestTemplate) | +81.7%      | 0.04G        | +9ms             | +67ms   | +42ms   |
+| 测试场景：Envoy | CPU占用率增加 | 平均调用时延增加 | p90增加 | p99增加 |
+| --------------- | ------------- | ---------------- | ------- | ------- |
+| HttpClient      | +17.7%        | +1.24ms          | +2ms    | +2ms    |
+| HttpAsyncClient | +17.8%        | +1.48ms          | +2ms    | +2ms    |
+| jdkHttp         | +28.8%        | +2ms             | +3ms    | +4ms    |
+| OkHttp          | +21.2%        | +1.18ms          | +2ms    | +1ms    |
 
 
 #### 总结
 
-1. 500TPS下，基线应用挂载Sermant进行服务路由CPU增加不超过20%，平均调用时延增长不超过1ms，内存增加50M左右；使用Envoy，CPU占用相比基线应用CPU损耗超过80%，平均调用时延增加5ms以上，资源损耗较大。
-2. 通过性能测试对比，Sermant基于xDS协议的路由和负载均衡能力无论是CPU损耗还是调用时延等方面性能均超过Envoy。
+1. 2000TPS下，基线应用挂载Sermant进行服务路由额外CPU占用率增加不超过1.5%，平均调用时延增长不超过0.1ms；使用Envoy，CPU占用率相比基线应用额外增加超过15%，平均调用时延增加1ms以上，资源损耗较大。
+2. 相较于Envoy，Sermant在额外CPU占用率和平均调用时延方面平均下降超90%，性能显著提升。
 
 ## 预过滤启动加速机制
 
