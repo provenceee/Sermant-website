@@ -13,6 +13,16 @@ blogArr:
       - Microservice Governance
       - Proxyless Architecture
 
+    - name: Implementing xDS Service Mesh Based on Sermant, with Achieving 15x Higher Performance and Lower Costs
+      writer: 戴振宇
+      date: 2024/11/27
+      description: 'Implementing xDS service mesh based on Sermant, with performance significantly improved compared to Envoy'
+      path: 'https://bbs.huaweicloud.com/blogs/440653'
+      tags:
+      - xDS Protocol
+      - Sermant
+      - Service Mesh
+
     - name: Application of Sermant Backend Configuration Management Function in Microservice Governance Scenarios
       writer: 张豪鹏
       date: 2024/09/30

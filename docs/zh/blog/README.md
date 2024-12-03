@@ -13,6 +13,16 @@ blogArr:
       - 微服务治理
       - 无代理架构
 
+    - name: 基于Sermant实现xDS服务网格，获取15+倍更高性能和更低成本
+      writer: 戴振宇
+      date: 2024/11/27
+      description: '基于Sermant实现xDS服务网格，性能相较Envoy显著提升'
+      path: 'https://bbs.huaweicloud.com/blogs/440653'
+      tags:
+      - xDS协议
+      - Sermant
+      - 服务网格
+
     - name: Sermant Backend配置管理功能在微服务治理场景中的应用
       writer: 张豪鹏
       date: 2024/09/30
