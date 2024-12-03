@@ -73,11 +73,25 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-2.1.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
-请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)： # 配置Sermant Agent参数，此处可为空
+请选择需要执行的命令：
+0: INSTALL-AGENT
+命令说明：安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件
+1: UNINSTALL-AGENT
+命令说明：卸载Sermant Agent，同时卸载所有已安装插件
+2: INSTALL-PLUGINS
+命令说明：安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件）
+3: UNINSTALL-PLUGINS
+命令说明：卸载Sermant Agent中已安装的插件
+4: UPDATE-PLUGINS
+命令说明：更新Sermant Agent中已安装的插件
+5: CHECK-ENHANCEMENT
+命令说明：查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）
+请输入您要执行命令的序号：0 # 此处选择安装Sermant Agent的命令序号
+请输入向Sermant Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：appName=default # 配置Sermant Agent参数，此处可为空
 ```
 
 按照指引填充完成后在`spring-provider.jar`日志中可以看到以下内容：
@@ -110,7 +124,20 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
-请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：command=UNINSTALL-AGENT # 此处通过传入参数下发卸载指令
+请选择需要执行的命令：
+0: INSTALL-AGENT
+命令说明：安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件
+1: UNINSTALL-AGENT
+命令说明：卸载Sermant Agent，同时卸载所有已安装插件
+2: INSTALL-PLUGINS
+命令说明：安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件）
+3: UNINSTALL-PLUGINS
+命令说明：卸载Sermant Agent中已安装的插件
+4: UPDATE-PLUGINS
+命令说明：更新Sermant Agent中已安装的插件
+5: CHECK-ENHANCEMENT
+命令说明：查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）
+请输入您要执行命令的序号：1 # 此处选择卸载Sermant Agent的命令序号
 ```
 
 按照指引填充完成后在`spring-provider.jar`日志中可以看到以下内容：
@@ -143,7 +170,22 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
-请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：command=INSTALL-PLUGINS:monitor # 此处通过传入参数下发安装插件指令 本示例以monitor进行演示
+请选择需要执行的命令：
+0: INSTALL-AGENT
+命令说明：安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件
+1: UNINSTALL-AGENT
+命令说明：卸载Sermant Agent，同时卸载所有已安装插件
+2: INSTALL-PLUGINS
+命令说明：安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件）
+3: UNINSTALL-PLUGINS
+命令说明：卸载Sermant Agent中已安装的插件
+4: UPDATE-PLUGINS
+命令说明：更新Sermant Agent中已安装的插件
+5: CHECK-ENHANCEMENT
+命令说明：查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）
+请输入您要执行命令的序号：2 # 此处选择安装Sermant Agent插件的命令序号
+请输入您要操作的插件名称，多个插件使用/分隔：monitor # 此处传入需安装的插件名称 本示例以monitor插件进行演示
+请输入向Sermant Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：# 配置Sermant Agent参数，此处可为空
 ```
 
 按照指引填充完成后在`spring-provider.jar`日志中可以看到以下内容：
@@ -195,7 +237,21 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
-请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：command=UNINSTALL-PLUGINS:monitor # 此处通过传入参数下发安装插件指令
+请选择需要执行的命令：
+0: INSTALL-AGENT
+命令说明：安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件
+1: UNINSTALL-AGENT
+命令说明：卸载Sermant Agent，同时卸载所有已安装插件
+2: INSTALL-PLUGINS
+命令说明：安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件）
+3: UNINSTALL-PLUGINS
+命令说明：卸载Sermant Agent中已安装的插件
+4: UPDATE-PLUGINS
+命令说明：更新Sermant Agent中已安装的插件
+5: CHECK-ENHANCEMENT
+命令说明：查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）
+请输入您要执行命令的序号：3 # 此处选择卸载Sermant Agent中已安装插件的命令序号
+请输入您要操作的插件名称，多个插件使用/分隔：monitor # 此处传入需卸载的插件名称 本示例以monitor插件进行演示
 ```
 
 按照指引填充完成后在`spring-provider.jar`日志中可以看到以下内容：
@@ -280,7 +336,20 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
-请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：command=CHECK_ENHANCEMENT # 此处通过传入参数下发查询增强信息指令
+请选择需要执行的命令：
+0: INSTALL-AGENT
+命令说明：安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件
+1: UNINSTALL-AGENT
+命令说明：卸载Sermant Agent，同时卸载所有已安装插件
+2: INSTALL-PLUGINS
+命令说明：安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件）
+3: UNINSTALL-PLUGINS
+命令说明：卸载Sermant Agent中已安装的插件
+4: UPDATE-PLUGINS
+命令说明：更新Sermant Agent中已安装的插件
+5: CHECK-ENHANCEMENT
+命令说明：查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）
+请输入您要执行命令的序号：5 # 此处选择增强信息查询的命令序号
 ```
 
 按照指引填充完成后在sermant日志中可以看到以下内容：
@@ -391,9 +460,26 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class AgentLoader {
+    private static final List<String> FULL_COMMAND = new ArrayList<>();
+
+    private static final Set<String> PLUGIN_COMMAND = new HashSet<>();
+
+    private static final Set<String> WITH_CONFIG_COMMAND = new HashSet<>();
+
+    private static final Map<String, String> COMMAND_DETAILS = new HashMap<>();
+
+    private static boolean validIndexFlag = false;
+
+    private static final int RETRY_COUNT = 3;
+
     private AgentLoader() {
     }
 
@@ -401,7 +487,9 @@ public class AgentLoader {
      * AgentLoader 的main方法
      */
     public static void main(String[] args)
-        throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+            throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+        initCommandCollection();
+
         List<VirtualMachineDescriptor> vmDescriptors = VirtualMachine.list();
 
         if (vmDescriptors.isEmpty()) {
@@ -417,13 +505,25 @@ public class AgentLoader {
 
         // 读取用户输入的序号
         BufferedReader userInputReader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("请输入需要使用Sermant Agent的Java进程序号：");
-        int selectedProcessIndex = Integer.parseInt(userInputReader.readLine());
+        int selectedProcessIndex = 0;
+        int retryCount = RETRY_COUNT;
+        while (!validIndexFlag && retryCount > 0) {
+            System.out.print("请输入需要使用Sermant Agent的Java进程序号：");
+            selectedProcessIndex = Integer.parseInt(userInputReader.readLine());
 
-        if (selectedProcessIndex < 0 || selectedProcessIndex >= vmDescriptors.size()) {
-            System.out.println("无效的进程序号");
+            if (selectedProcessIndex >= 0 && selectedProcessIndex < vmDescriptors.size()) {
+                validIndexFlag = true;
+            } else {
+                System.out.println("无效的进程序号，请输入范围内的序号。");
+                retryCount--;
+            }
+        }
+
+        if (!validIndexFlag) {
+            System.out.println("重试次数已用尽，操作失败。");
             return;
         }
+        validIndexFlag = false;
 
         // 连接到选定的虚拟机
         VirtualMachineDescriptor selectedDescriptor = vmDescriptors.get(selectedProcessIndex);
@@ -435,16 +535,99 @@ public class AgentLoader {
         System.out.print("请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：");
         String agentPath = userInputReader.readLine();
 
-        // 获取传入Sermant Agent的参数
-        System.out.print("请输入向Sermant Agent传入的参数(可为空，默认配置参数agentPath)：");
-        String agentArgs = "agentPath=" + agentPath + "," + userInputReader.readLine();
+        // 展示目前支持的命令列表
+        System.out.println("请选择需要执行的命令：");
+        for (int i = 0; i < FULL_COMMAND.size(); i++) {
+            String command = FULL_COMMAND.get(i);
+            System.out.println(i + ": " + command);
+            System.out.println("命令说明：" + COMMAND_DETAILS.get(command));
+        }
 
+        int selectedCommandIndex = 0;
+        retryCount = RETRY_COUNT;
+        while (!validIndexFlag && retryCount > 0) {
+            System.out.print("请输入您要执行命令的序号：");
+            selectedCommandIndex = Integer.parseInt(userInputReader.readLine());
+
+            if (selectedProcessIndex >= 0 && selectedCommandIndex < FULL_COMMAND.size()) {
+                validIndexFlag = true;
+            } else {
+                System.out.println("无效的命令序号，请输入范围内的序号。");
+                retryCount--;
+            }
+        }
+
+        if (!validIndexFlag) {
+            System.out.println("重试次数已用尽，操作失败。");
+            return;
+        }
+        validIndexFlag = false;
+
+        String currentCommand = FULL_COMMAND.get(selectedCommandIndex);
+
+        if (PLUGIN_COMMAND.contains(currentCommand)) {
+            System.out.print("请输入您要操作的插件名称，多个插件使用/分隔：");
+            currentCommand += ":";
+            currentCommand += userInputReader.readLine();
+        }
+
+        String agentArgs = "agentPath=" + agentPath + ",";
+        if (WITH_CONFIG_COMMAND.contains(FULL_COMMAND.get(selectedCommandIndex))) {
+            // 获取传入Sermant Agent的参数
+            System.out.print("请输入向Sermant Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：");
+            if (currentCommand.equals("INSTALL-AGENT")) {
+                agentArgs += userInputReader.readLine();
+            } else {
+                agentArgs += "command=" + currentCommand + "," +
+                        userInputReader.readLine();
+            }
+            // 关闭资源
+            userInputReader.close();
+
+            // 启动Sermant Agent
+            vm.loadAgent(agentPath + "/sermant-agent.jar", agentArgs);
+            vm.detach();
+            System.out.println("命令执行完毕，脚本已退出");
+            return;
+        }
+
+        agentArgs += "command=" + currentCommand + ",";
         // 关闭资源
         userInputReader.close();
 
         // 启动Sermant Agent
         vm.loadAgent(agentPath + "/sermant-agent.jar", agentArgs);
         vm.detach();
+        System.out.println("命令执行完毕，脚本已退出");
+    }
+
+    private static void initCommandCollection() {
+        // 填充目前支持的命令
+        FULL_COMMAND.add("INSTALL-AGENT");
+        FULL_COMMAND.add("UNINSTALL-AGENT");
+        FULL_COMMAND.add("INSTALL-PLUGINS");
+        FULL_COMMAND.add("UNINSTALL-PLUGINS");
+        FULL_COMMAND.add("UPDATE-PLUGINS");
+        FULL_COMMAND.add("CHECK-ENHANCEMENT");
+
+        // 命令描述
+        COMMAND_DETAILS.put("INSTALL-AGENT", "安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件");
+        COMMAND_DETAILS.put("UNINSTALL-AGENT", "卸载Sermant Agent，同时卸载所有已安装插件");
+        COMMAND_DETAILS.put("INSTALL-PLUGINS", "安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins"
+                + ".yaml配置文件中dynamicPlugins.active下的所有插件）");
+        COMMAND_DETAILS.put("UNINSTALL-PLUGINS", "卸载Sermant Agent中已安装的插件");
+        COMMAND_DETAILS.put("UPDATE-PLUGINS", "更新Sermant Agent中已安装的插件");
+        COMMAND_DETAILS.put("CHECK-ENHANCEMENT", "查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）");
+
+        // 动态热插拔插件的命令
+        PLUGIN_COMMAND.add("INSTALL-PLUGINS");
+        PLUGIN_COMMAND.add("UNINSTALL-PLUGINS");
+        PLUGIN_COMMAND.add("UPDATE-PLUGINS");
+
+        // 需要传入Sermant Agent参数的命令
+        WITH_CONFIG_COMMAND.add("INSTALL-AGENT");
+        WITH_CONFIG_COMMAND.add("INSTALL-PLUGINS");
+        WITH_CONFIG_COMMAND.add("UPDATE-PLUGINS");
     }
 }
 ```
