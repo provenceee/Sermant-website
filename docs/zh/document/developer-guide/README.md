@@ -12,7 +12,7 @@
 本地执行如下Maven指令：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.0.0 -DgroupId=io.sermant -Dversion=2.0.0 -Dpackage=io.sermant -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.1.0 -DgroupId=io.sermant -Dversion=2.1.0 -Dpackage=io.sermant -DartifactId=first-plugin
 ```
 
 执行上述指令后，出现下述日志后回车进行确认：
@@ -20,12 +20,12 @@ $ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=ser
 ```shell
 [INFO] Using property: groupId = io.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 2.0.0
+[INFO] Using property: version = 2.1.0
 [INFO] Using property: package = io.sermant
 Confirm properties configuration:
 groupId: io.sermant
 artifactId: first-plugin
-version: 2.0.0
+version: 2.1.0
 package: io.sermant
  Y: :
 ```
@@ -37,7 +37,7 @@ package: io.sermant
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time:  5.409 s
-[INFO] Finished at: 2023-10-19T15:10:05+08:00
+[INFO] Finished at: 2024-12-01T15:10:05+08:00
 [INFO] ------------------------------------------------------------------------
 ```
 
@@ -73,60 +73,68 @@ package: io.sermant
 
 指定期望增强的类，需在`io.sermant.template.TemplateDeclarer`中的`getClassMatcher()`方法实现如下逻辑：
 
-1. 定义[类匹配器](bytecode-enhancement.md#类匹配器)`ClassMatcher.nameEquals("io.demo.template.Application")`，该匹配器通过类名称匹配`io.demo.template.Application`类。
+1. 定义[类匹配器](bytecode-enhancement.md#类匹配器)`ClassMatcher.nameEquals("io.sermant.demo.template.Application")`，该匹配器通过类名称匹配`io.sermant.demo.template.Application`类。
 
 ```java
 @Override
 public ClassMatcher getClassMatcher() {
-		return ClassMatcher.nameEquals("io.demo.template.Application");
+		return ClassMatcher.nameEquals("io.sermant.demo.template.Application");
 }
 ```
 
 > 注：上述逻辑已在模版代码中实现
 >
-> `io.demo.template.Application`逻辑如下：
+> `io.sermant.demo.template.Application`逻辑如下：
 >
 > ```java
+> @SpringBootApplication
 > public class Application {
 >     public static void main(String[] args) {
+>         SpringApplication.run(Application.class, args);
+>         greeting();
+>     }
+>     private static void greeting() {
 >         System.out.println("Good afternoon!");
 >         SimulateServer.handleRequest(new HashMap<>());
 >     }
 > }
 > ```
 >
-> 我们将通过该插件在其前后增加`System.out.println("Good morning!")`和`System.out.println("Good night!")`逻辑。
+> 我们将通过该插件在`greeting`方法前后增加`System.out.println("Good morning!")`和`System.out.println("Good night!")`逻辑。
 
 ### 声明需增强的方法
 
-指定需要增强的类后，需要指定该类中你期望增强的方法，并为该方法定义增强逻辑，上述步骤需要在`io.sermant.template.TemplateDeclarer`中的`getInterceptDeclarers(ClassLoader classLoader)`方法中添加如下逻辑：
+指定需要增强的类后，需要指定该类中你期望增强的方法，并为该方法定义增强逻辑，上述步骤需要在`io.sermant.template.TemplateDeclarer`中的`getInterceptDeclarers(ClassLoader classLoader)`方法中指定方法匹配器和拦截器：
 
-1. 定义一个[方法匹配器](bytecode-enhancement.md#方法匹配器)`MethodMatcher.nameEquals("main")`，该匹配器通过方法名称匹配`io.demo.template.Application`类中的`main`方法。
-2. 定义针对`main`方法的[拦截器](bytecode-enhancement.md#拦截器)，并在其`before`方法中补充`System.out.println("Good morning!")`逻辑，`after`方法中补充`System.out.println("Good night!")`逻辑，`before`方法和`after`方法将会在`main`方法执行前后生效。
-
+1. 定义一个[方法匹配器](bytecode-enhancement.md#方法匹配器)`MethodMatcher.nameEquals("greeting")`，该匹配器通过方法名称匹配`io.demo.template.Application`类中的`greeting`方法，并指定该方法的拦截器。
 ```java
 @Override
 public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
     return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("main"), new Interceptor() {
-                @Override
-                public ExecuteContext before(ExecuteContext context) throws Exception {
-                    System.out.println("Good morning!");
-                    return context;
-                }
-
-                @Override
-                public ExecuteContext after(ExecuteContext context) throws Exception {
-                    System.out.println("Good night!");
-                    return context;
-                }
-
-                @Override
-                public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-                    return context;
-                }
-            })
+            InterceptDeclarer.build(MethodMatcher.nameEquals("greeting"), new TemplateInterceptor())
     };
+}
+```
+2. 定义针对`greeting`方法的[拦截器](bytecode-enhancement.md#拦截器)，在`io.sermant.template.TemplateInterceptor`的`before`方法中补充`System.out.println("Good morning!")`逻辑，`after`方法中补充`System.out.println("Good night!")`逻辑，`before`方法和`after`方法将会在`greeting`方法执行前后生效。
+
+```java
+public class TemplateInterceptor implements Interceptor {
+    @Override
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        System.out.println("Good morning!");
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        System.out.println("Good night!");
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        return context;
+    }
 }
 ```
 
@@ -184,6 +192,7 @@ $ java -javaagent:sermant-agent.jar -jar Application.jar
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
+************省略SpringBoot应用启动日志************
 Good morning!
 Good afternoon!
 Good night!

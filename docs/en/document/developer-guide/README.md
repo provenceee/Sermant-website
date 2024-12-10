@@ -12,7 +12,7 @@ This article is for guidance on how to develop your first plugin locally.
 Execute the following Maven commands locally：
 
 ```shell
-$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.0.0 -DgroupId=io.sermant -Dversion=2.0.0 -Dpackage=io.sermant -DartifactId=first-plugin
+$ mvn archetype:generate -DarchetypeGroupId=io.sermant -DarchetypeArtifactId=sermant-template-archetype -DarchetypeVersion=2.1.0 -DgroupId=io.sermant -Dversion=2.1.0 -Dpackage=io.sermant -DartifactId=first-plugin
 ```
 
 After executing the above command, press Enter for confirmation when the following log is displayed：
@@ -20,12 +20,12 @@ After executing the above command, press Enter for confirmation when the followi
 ```shell
 [INFO] Using property: groupId = io.sermant
 [INFO] Using property: artifactId = first-plugin
-[INFO] Using property: version = 2.0.0
+[INFO] Using property: version = 2.1.0
 [INFO] Using property: package = io.sermant
 Confirm properties configuration:
 groupId: io.sermant
 artifactId: first-plugin
-version: 2.0.0
+version: 2.1.0
 package: io.sermant
  Y: :
 ```
@@ -37,7 +37,7 @@ If the following success log appears, the project is successfully created using 
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time:  5.409 s
-[INFO] Finished at: 2023-10-19T15:10:05+08:00
+[INFO] Finished at: 2024-12-01T15:10:05+08:00
 [INFO] ------------------------------------------------------------------------
 ```
 
@@ -73,59 +73,70 @@ First find the `io.sermant.template.TemplateDeclarer` class of template project 
 
 The `getClassMatcher()` method of `io.sermant.template.TemplateDeclarer` class need to be  implement the following logic to enhance the class：
 
-1. Define [Class matcher](bytecode-enhancement.md#Class-Matcher)`ClassMatcher.nameEquals("io.demo.template.Application")`, the matcher matches `io.demo.template.Application` class by class name.
+1. Define [Class matcher](bytecode-enhancement.md#Class-Matcher)`ClassMatcher.nameEquals("io.sermant.demo.template.Application")`, the matcher matches `io.sermant.demo.template.Application` class by class name.
 
 ```java
 @Override
 public ClassMatcher getClassMatcher() {
-    return ClassMatcher.nameEquals("io.demo.template.Application");
+    return ClassMatcher.nameEquals("io.sermant.demo.template.Application");
 }
 ```
 
 > Note：The above logic is implemented in the template code
 >
-> `io.demo.template.Application`logic is as follows：
+> `io.sermant.demo.template.Application`logic is as follows：
 >
 > ```java
+> @SpringBootApplication
 > public class Application {
->        public static void main(String[] args) {
->            System.out.println("Good afternoon!");
->        }
+>  public static void main(String[] args) {
+>      SpringApplication.run(Application.class, args);
+>      greeting();
+>  }
+>  private static void greeting() {
+>      System.out.println("Good afternoon!");
+>      SimulateServer.handleRequest(new HashMap<>());
+>  }
 > }
 > ```
 >
-> We will add System.out.println("Good morning!") and System.out.println("Good night!")` logic before and after this plugin.
+> We will add` System.out.println("Good morning!")` and `System.out.println("Good night!")` logic before and after `greeting` method in this plugin.
 
 ### Declare the Methods That Need to Be Enhanced
 
 After you specify the class that you want to enhance, you need to specify the method in that class that you want to enhance and define the enhancement logic for that method, the above steps require the following logic to be added to the `getInterceptDeclarers(ClassLoader classLoader)` method in the `io.sermant.template.TemplateDeclarer` class：
 
-1. Define [Method matcher](bytecode-enhancement.md#Method-Matcher) `MethodMatcher.nameEquals("main")`，the matcher matches the `main` method of `io.demo.template.Application` class by method name.
-2. Define an [interceptor](bytecode-enhancement.md#Interceptor) for the 'main' method, add `System.out.println("Good morning!")` to the `before` method , and add `System.out.println("Good morning!")` logic to the `after` method, `before` and `after` method will take effect before and after the `main` method is executed.
+1. Define [Method matcher](bytecode-enhancement.md#Method-Matcher) `MethodMatcher.nameEquals("greeting")`，the matcher matches the `greeting` method of `io.sermant.demo.template.Application` class by method name.
 
 ```java
 @Override
 public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
     return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("main"), new Interceptor() {
-                @Override
-                public ExecuteContext before(ExecuteContext context) throws Exception {
-                    System.out.println("Good morning!");
-                    return context;
-                }
-
-                @Override
-                public ExecuteContext after(ExecuteContext context) throws Exception {
-                    System.out.println("Good night!");
-                    return context;
-                }
-
-                @Override
-                public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-                    return context;
-                }
-            })
+            InterceptDeclarer.build(MethodMatcher.nameEquals("greeting"), new TemplateInterceptor())
     };
+}
+```
+
+2. Define an [interceptor](bytecode-enhancement.md#interceptor) for the `greeting` method, adding the logic `System.out.println("Good morning!")` in the `before`method of `io.sermant.template.TemplateInterceptor` and `System.out.println("Good night!")` in the `after`method. The `before` method and `after` method will take effect before and after the execution of the `greeting` method, respectively.
+
+```java
+public class TemplateInterceptor implements Interceptor {
+    @Override
+    public ExecuteContext before(ExecuteContext context) throws Exception {
+        System.out.println("Good morning!");
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) throws Exception {
+        System.out.println("Good night!");
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+        return context;
+    }
 }
 ```
 
@@ -182,6 +193,7 @@ Good afternoon!
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading core library into SermantClassLoader.
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Loading sermant agent, artifact is: default
 [xxxx-xx-xxTxx:xx:xx.xxx] [INFO] Load sermant done, artifact is: default
+************Omit Spring Boot application startup logs************
 Good morning!
 Good afternoon!
 Good night!
