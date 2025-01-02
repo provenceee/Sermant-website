@@ -382,6 +382,223 @@ xxxxx.xxxx.TestClassA#testFunctionA(boolean,java.lang.String,java.lang.String,ja
 xxxxx.xxxx.TestClassB#testFunctionB(boolean,java.lang.String,java.lang.String,java.lang.String)@sun.misc.Launcher$AppClassLoader@5c647e05 [xxxx.xxxx.TestInterceptorB,xxxx.xxxx.TestInterceptorC]
 ```
 
+## 在Sermant中使用和管理外部JavaAgent
+
+本文档主要介绍如何在Sermant中挂载外部JavaAgent以及最佳实践。
+
+### 功能介绍
+
+Sermant是通过JavaAgent方式来实现的字节码增强和服务治理功能。无论是agentmain还是premain方式，在JVM启动时，是支持多个JavaAgent同时挂载生效的。开源社区中OpenTelemetry、Arthas、Skywalking等都有基于此方式开发的项目。因此多个JavaAgent同时作用于宿主应用上实现多种监控、运维、服务治理的功能是较为常见的需求。
+
+#### 为什么要在Sermant中使用外部Agent
+
+在Sermant中使用外部 Agent，可以通过开源社区或第三方解决方案直接集成已有成熟 Agent，在多场景功能需求和模块化解耦上可以体现其降低开发成本和集成开源生态的价值。
+
+**1. 满足多场景功能需求**
+
+在现代微服务架构中，应用通常需要同时满足以下需求：
+
+**分布式追踪**：采集调用链数据（如 OpenTelemetry、Skywalking）。
+
+**性能监控**：检测运行时性能瓶颈（如 Arthas、Elastic APM）。
+
+**服务治理**：实现动态路由、限流、熔断、配置下发（Sermant 的核心功能）。
+
+通过使用外部 Agent，可以灵活组合不同功能模块，让专注于服务治理领域的Sermant可以和其他项目组合成更加丰富的解决方案。
+
+**2. 模块化解耦**
+
+Sermant 的服务治理功能可以通过插件化设计实现，而使用外部 Agent 则可以进一步增强解耦性：
+
+**职责分离**：不同 Agent 专注于各自的增强逻辑，例如一个负责追踪、一个负责监控，避免耦合复杂性。
+
+**按需加载**：外部 Agent 可按需动态启用或关闭功能，并且不影响其他 Agent 的工作。
+
+**3. 防止多个JavaAgent冲突**
+
+由于JavaAgent产品实现的多样性，多个JavaAgent同时运行可能会存在兼容问题。通过提前识别兼容性，可以在确保无冲突的前提下，让其他JavaAgent和Sermant得以协同工作，互不干扰。
+
+#### 快速开始: 以OpenTelemetry Agent为例的最佳实践
+
+我们以OpenTelemetry Agent为例演示了如何在Sermant中使用和管理外部JavaAgent。快速上手使用教程可参考[操作和结果验证](#操作和结果验证)。
+
+### 支持版本与限制
+
+#### 支持版本
+
+**已经过验证的JavaAgent**
+
+在 Sermant 中，以下 Agent 经过验证，可以正常加载并与 Sermant 一起工作：
+
+- **OpenTelemetry  Agent**
+
+  版本范围：1.21.0~2.10.0
+
+  功能：分布式链路追踪、指标采集。
+
+  使用场景：跨服务调用链跟踪，与 Sermant 服务治理功能结合使用。
+
+#### 使用限制
+
+**未经验证的JavaAgent的使用**
+
+注意，目前社区只对OpenTelemetry  Agent进行了兼容性的验证。由于JavaAgent实现方式的各有不同，需要开发者和用户自行测试验证Sermant Agent在前，其他JavaAgent在后挂载时的兼容性。若测试无问题，则可以尝试使用Sermant来进行管理。
+
+**JavaAgent之间可能存在的冲突问题**
+
+用户采用的多个JavaAgent产品可能采用不同的字节码增强框架(ASM、Javassist、ByteBuddy、CGLIB)来实现，而在使用不同的字节码增强框架时，可能会出现各种冲突问题，这些冲突可能导致字节码增强失效、应用程序无法启动等问题。即使是使用相同的字节码增强框架也可能会出现冲突问题。
+
+Sermant社区成员曾对这些问题做了一些分析，您可以打开以下文章链接参考：
+
+[字节码增强常见问题系列（一）| 记一次多个JavaAgent同时使用的类增强冲突问题及分析](https://bbs.huaweicloud.com/blogs/382800)
+
+[字节码增强常见问题系列（二）| 兼容性难题：如何让不同字节码增强框架和谐共存？](https://bbs.huaweicloud.com/blogs/407641)
+
+### 在Sermant使用外部Agent的方式
+
+- **静态挂载方式1: 手动配置**
+
+**适用部署方式**：应用通过虚机或Kubernetes部署。目前只允许挂载1个外部Agent，后续逐步考虑开放。
+
+**使用方式**：
+
+1. 用户需在Sermant Agent Release包中`agent/config/config.properties`文件中配置以下配置项；
+2. 然后通过-javaagent命令挂载Sermant Agent启动即可。
+
+```properties
+# 是否在启动时注入外部agent，默认值为false
+agent.config.externalAgent.injection=false
+# 自定义外部Agent名字, 其中OTEL代表OpenTelemetry Agent已经测试验证支持，其他Agent需开发者和用户自行验证
+agent.config.externalAgent.name=OTEL
+# 外部Agent的文件路径，例如: /user/opentelemetry-javaagent.jar
+agent.config.externalAgent.file=
+```
+
+- **静态挂载方式2: 借助Sermant Injector自动挂载(推荐)**
+
+**适用部署方式**：应用通过Kubernetes部署。目前只允许挂载1个外部Agent，后续逐步考虑开放。
+
+**使用前提**：已经[在Kubernetes部署Sermant Injector](sermant-injector.md)，并且制作完成Sermant Agent和外部Agent的镜像
+
+**使用方式**：
+
+1. 在应用的yaml中添加`env.sermant.io/external.agent.injection: "OTEL"`。其中OTEL代表OpenTelemetry Agent已经测试验证支持，其他Agent名称可自定义。
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: demo-test
+     namespace: default
+     labels:
+       app: demo-test
+   spec:
+     replicas: 1
+   selector:
+       matchLabels:
+         app: demo-test
+     template:
+       metadata:
+         labels:
+           app: demo-test
+           sermant-injection: enabled
+         annotations:
+           # key为env.sermant.io/external.agent.injection，value表示自定义注入的外部Agent名字，其中OTEL代表OpenTelemetry Agent已经测试验证支持
+             env.sermant.io/external.agent.injection: "OTEL"
+       spec:
+         containers:
+         - name: image
+           image: image:1.0.0
+           ports: 
+           - containerPort: 8080
+   ```
+
+2. 在K8s中启动正常启动应用即可
+
+- **动态挂载方式1: 使用脚本手动挂载**
+
+**适用部署方式**：应用通过虚机部署。可挂载多个外部Agent（不推荐，多个Agent兼容性问题很难保证）。
+
+**使用方式**：按照Sermant使用手册中的[agentmain方式启动：动态挂载](sermant-agent.md#agentmain方式启动：动态挂载)指南来使用脚本，按照以下命令提示执行。
+
+```shell
+# 运行指令根据所使用操作系统进行选择，此处以Linux、MacOS指令编写
+$ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
+请选择需要使用Sermant Agent的Java进程：
+0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
+1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-1.2.0.jar # xxxxx为进程号，此处模糊
+请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
+您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
+请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录
+请选择需要执行的命令：
+0: INSTALL-AGENT
+命令说明：安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件
+1: UNINSTALL-AGENT
+命令说明：卸载Sermant Agent，同时卸载所有已安装插件
+2: INSTALL-PLUGINS
+命令说明：安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件）
+3: UNINSTALL-PLUGINS
+命令说明：卸载Sermant Agent中已安装的插件
+4: UPDATE-PLUGINS
+命令说明：更新Sermant Agent中已安装的插件
+5: CHECK-ENHANCEMENT
+命令说明：查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）
+6: INSTALL-EXTERNAL-AGENT
+命令说明：安装外部Agent
+请输入您要执行命令的序号：6 # 此处选择安装外部Agent的命令序号
+请输入您要安装的Agent名字：OTEL # 此处传入需挂载的外部Agent名字，本示例以OpenTelemetry Agent来进行说明
+请输入您要安装的Agent路径：/user/opentelemetry-javaagent.jar # 此处传入外部Agent的文件路径
+请输入向Sermant Agent或外部Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：# 配置Sermant Agent参数或外部Agent参数，此处可为空
+```
+
+- **动态挂载方式2: 借助Sermant Backend轻松完成挂载(推荐)**
+
+**适用部署方式**：应用通过虚机或Kubernetes部署。可挂载多个外部Agent（不推荐，多个Agent兼容性问题很难保证）。
+
+**使用前提**：已部署[Sermant Backend](sermant-backend.md)和[动态配置中心](configuration-center.md)。应用已挂载Sermant Agent（需开启热插拔服务）并且心跳上报至Sermant Backend
+
+**使用方式**：
+
+1. 点击实例状态标签页
+2. 选择状态为在线的实例，点击热插拔按钮
+3. 在弹框中选择命令类型：安装外部Agent。并填写Agent名称、Agent路径等信息。
+4. 点击确认即可下发挂载指令实现外部Agent的挂载
+
+<MyImage src="/docs-img/install-external-agent.png"></MyImage>
+
+该方式可以通过外部Agent挂载的状态和上报的事件来查看结果。
+
+### 操作和结果验证
+
+本节以Sermant Backend的方式来验证外部Agent的使用和管理。
+
+#### 准备工作
+
+部署准备工作可参考[Sermant Backend操作和结果验证](sermant-backend.md#操作和结果验证)部分的1、2、3小节。
+
+#### 挂载外部Agent的操作和验证
+
+**挂载操作**
+
+参考以上使用方式的介绍，在Backend中，点击实例状态标签页；选择状态为在线的实例，点击热插拔按钮；在弹框中选择命令类型：安装外部Agent。并填写Agent名称、Agent路径等信息。最后点击确认即可下发挂载指令。
+
+<MyImage src="/docs-img/install-external-agent.png"></MyImage>
+
+**结果验证**
+
+在实例状态标签页面，通过外部Agent状态栏可以查看当前已经挂载的外部Agent的信息，包含名称和版本信息。
+
+<MyImage src="/docs-img/external-agent-status.png"></MyImage>
+
+在实例状态标签页面点击查看结果或进入事件管理的监测页面，可以看到安装外部Agent和OTEL Agent启动(OTEL适配，其他Agent暂无)上报的事件。
+
+<MyImage src="/docs-img/external-agent-events.png"></MyImage>
+
+综合以上观测方式，我们可以判断OpenTelemetry Agent已经完成启动。启动完成后，Agent自身是否有异常当前需通过各Agent日志以及是否功能生效来进行分析判断。
+
+
+
 ## Sermant指令说明
 
 Sermant可以通过运行`AgentLoader`并传入下述指令实现Sermant的热插拔能力，还支持动态挂载外部Agent；同时，Sermant通过任意方式启动成功后，可以通过运行`AgentLoader`并传入指令查询增强信息。具体的指令如下所示：
