@@ -67,7 +67,7 @@ $ java -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader
 请选择需要使用Sermant Agent的Java进程：
 0: xxxxx AgentLoader # xxxxx为进程号，此处模糊
 1: xxxxx spring-provider.jar # xxxxx为进程号，此处模糊
-2: xxxxx sermant-backend-2.1.0.jar # xxxxx为进程号，此处模糊
+2: xxxxx sermant-backend-2.2.0.jar # xxxxx为进程号，此处模糊
 请输入需要使用Sermant Agent的Java进程序号：1 # 选择spring-provider的进程序号
 您选择的进程 ID 是：xxxxx # xxxxx为进程号，此处模糊
 请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：${path}/sermant-agent-x.x.x/agent # 填充Sermant Agent所在目录

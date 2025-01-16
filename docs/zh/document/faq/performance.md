@@ -307,7 +307,7 @@ Sermant版本：[`Release v2.0.0`](https://github.com/sermant-io/Sermant/release
 
 2. Sidecar性能对比：测试Java应用在2000TPS下使用Sermant xDS路由和负载均衡能力或Sidecar（Envoy）相较于基线应用的性能对比，包括Pod的CPU占用、内存和服务调用时延指标。测试场景为spring-client应用查询数据库并调用spring-server应用，spring-client使用Sermant的路由插件实现基于xDS服务的路由和负载均衡能力，采集spring-client应用使用不同Http框架时所在Pod的性能指标。
 
-   > 说明：使用 [xds-router-demo](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-router-demo-2.1.0.tar.gz) 作为本次的基准应用进行性能测试
+   > 说明：使用 [xds-demo](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) 作为本次的基准应用进行性能测试
 
 ### 第一组测试：基线应用性能对比
 
@@ -324,7 +324,7 @@ Istio Version：v1.17.8
 
 K8s中所有应用Container的规格一致，均为`2vCPUs|4GiB`。
 
-Sermant版本：[`Release v2.1.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.1.0)
+Sermant版本：[`Release v2.2.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.2.0)
 
 #### 测试结果
 
@@ -361,7 +361,7 @@ Istio Version：v1.17.8
 
 K8s中所有应用Container的规格一致，均为`4vCPUs|8GiB`，Envoy 的Container规格为`4vCPUs|8GiB`。
 
-Sermant版本：[`Release v2.1.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.1.0)
+Sermant版本：[`Release v2.2.0`](https://github.com/sermant-io/Sermant/releases/tag/v2.2.0)
 
 #### 测试结果
 
