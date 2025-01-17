@@ -501,7 +501,7 @@ This demo includes a spring-client microservice, a spring-server microservice, a
 
 #### 1 Preparations
 
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-service-discovery-demo-2.1.0.tar.gz) the binary package of the demo.
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-service-discovery-demo-2.2.0.tar.gz) the binary package of the demo.
 - Prepare the Kubernetes environment.
 - Install Istio and start it.
 
@@ -557,12 +557,12 @@ Greetings from http://xxx.xxx.xxx.xxx:8080 : hello, the current time is 2050-01-
 
 ### Routing Example Based on xDS Service
 
-This tutorial demonstrates Sermant's routing capabilities based on xDS service using the `xds-router-demo` from the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-router-demo) repository. The demo includes two microservices: `spring-client` and `spring-server`. The `spring-client` microservice starts with the Sermant routing plugin and enables xDS-based routing capabilities. When the `spring-client` calls upstream services, the Sermant routing plugin routes the requests based on the upstream service’s routing rules, selecting the appropriate service instance that meets the rules.
+This tutorial demonstrates Sermant's routing capabilities based on xDS service using the `xds-demo` from the [Sermant-examples](https://github.com/sermant-io/Sermant-examples/tree/main/xds-demo) repository. The demo includes two microservices: `spring-client` and `spring-server`. The `spring-client` microservice starts with the Sermant routing plugin and enables xDS-based routing capabilities. When the `spring-client` calls upstream services, the Sermant routing plugin routes the requests based on the upstream service’s routing rules, selecting the appropriate service instance that meets the rules.
 
 #### 1. Preparation
 
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.1.0/sermant-examples-xds-router-demo-2.1.0.tar.gz) the demo binary artifact package.
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.1.0/sermant-2.1.0.tar.gz) the Sermant binary artifact package.
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.2.0/sermant-examples-xds-demo-2.2.0.tar.gz) the demo binary artifact package.
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.2.0/sermant-2.2.0.tar.gz) the Sermant binary artifact package.
 - Prepare a Kubernetes environment.
 - Install and start [Istio](https://istio.io/v1.23/docs/setup/getting-started/).
 
